@@ -1,15 +1,27 @@
-const { createServer } = require('node:http');
+const express = require("express");
+const app = express();
 
-const hostname = '127.0.0.1';
-const port = 3000;
+const books = [
+  { id: 1, title: "Book One" },
+  { id: 2, title: "Book Two" },
+];
 
-const server = createServer((req, res) => {
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
-  res.end('Hello World');
+app.use(express.json());
+
+// API route
+app.get("/api/books", (req, res) => {
+  res.json(books);
 });
 
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
+// Home route
+app.get("/api/books/:id", (req, res) => {
+  const book = books.find((b) => b.id === parseInt(req.params.id));
+  if (!book) return res.status(404).send("Book not found");
+  res.json(book)
 });
- 
+
+// Start server
+const PORT = 5000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
